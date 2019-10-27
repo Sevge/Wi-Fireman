@@ -1,5 +1,6 @@
 # Wi-Fireman 无线网络异常行为监控系统
-- Demo: http://47.106.66.106(wangtao,123123)
+- Demo: http://47.106.66.106
+- (wangtao,123123)
 ## 环境要求
 - MySQL 5.7
 - Python 3.6
@@ -15,7 +16,9 @@ curl https://raw.github.com/pypa/pip/master/contrib/get-pip.py | python
 ```
 - windows电脑：
 ```
-下载?http://peak.telecommunity.com/dist/ez_setup.py?和?https://raw.github.com/pypa/pip/master/contrib/get-pip.py?这两个文件，双击运行。
+下载?http://peak.telecommunity.com/dist/ez_setup.py和
+https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+两个文件，双击运行。
 ```
 
 ## 运行
@@ -51,9 +54,9 @@ mysql -uroot -p
 mysql > use wifiremen
 Mysql > source d:/wifiremen/wifiremen.sql (修改sql文件对应目录)
 ```
-# 开始运行：
-执行：?./manage.py runserver
-浏览器打开:?http://127.0.0.1:8000/? 就可以看到页面了。
+## 开始运行：
+执行：`./manage.py runserver`
+浏览器打开:`http://127.0.0.1:8000/` 就可以看到页面了。
 初始用户名与密码是：
-- wangtao，123123
+* wangtao，123123
 
