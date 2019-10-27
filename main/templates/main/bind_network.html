@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WiFirement-绑定监控网络</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- 上述meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/login.css' %}" rel="stylesheet"/>
+</head>
+<body>
+<div class="container">
+    <div class="col">
+        <form class="form-login" action="/bind_network/{{ user.name }}/" method="post">
+            {% csrf_token %}
+            <h3 class="text-center">{{ user.name }},请绑定监控网络</h3>
+            <!-- select -->
+            <div class="form-group">
+                <label>Select:</label>
+                <select class="form-control" name="selected_point" >
+                    {% for point in points %}
+                    <option value="{{ point.id }}">{{ point.ssid }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary float-right">完成</button>
+            </div>
+        </form>
+    </div>
+</div> <!-- /container -->
+</body>
+</html>

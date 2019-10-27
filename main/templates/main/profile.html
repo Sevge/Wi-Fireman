@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="col-md-12">
+        {% if msg %}
+            <div class="box box-default">
+                <div class="box-header with-border">
+                    <h3 class="box-title">提示</h3>
+                </div>
+                <div class="box-body">
+                    {{ msg }}
+                </div>
+            </div>
+        {% endif %}
+        <!-- /.box-body -->
+
+        <div class="box" style="height: 90%">
+            <div class="box-header with-border">
+                <h3 class="box-title">个人中心</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+
+            <form role="form" , method="post">
+                {% csrf_token %}
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">原始密码</label>
+                        <input type="password" class="form-control" id="exampleInputEmail1" name="password1"
+                               placeholder="输入原密码">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">修改密码</label>
+                        <input type="password" class="form-control" id="exampleInputEmail1" name="password2"
+                               placeholder="输入新密码">
+                    </div>
+
+
+                    {#                to do#}
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">修改用户名</label>
+                        <input type="password" class="form-control" id="exampleInputEmail1" name="password2"
+                               placeholder="输入新名称">
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">修改邮箱</label>
+                        <input type="password" class="form-control" id="exampleInputEmail1" name="password2"
+                               placeholder="输入新邮箱">
+                    </div>
+{#                    to do#}
+
+
+                    <div class="form-group">
+                        <label>重新绑定网络</label>
+                        <select class="form-control" name="selected_point">
+                            {% for point in points %}
+                                <option value="{{ point.id }}"
+                                        {% if point.id == now_point.id %}selected{% endif %}>{{ point.ssid }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+                <div class="box-footer pull-right">
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+    <!-- /.box -->
+{% endblock %}

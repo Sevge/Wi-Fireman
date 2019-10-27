@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    {#    <div class="col-md-12">#}
+    {#        <div class="box">#}
+    {#            <div class="box-header">#}
+    {#                <h3 class="box-title">警报记录</h3>#}
+    {#            </div>#}
+    {#            <!-- /.box-header -->#}
+    {#            <div class="box-body table-responsive no-padding">#}
+    {#                <table class="table table-hover">#}
+    {#                    <tr>#}
+    {#                        <th>ID</th>#}
+    {#                        <th>Point</th>#}
+    {#                        <th>Date</th>#}
+    {#                        <th>Level</th>#}
+    {#                        <th>Message</th>#}
+    {#                    </tr>#}
+    {#                    {% for i in logs %}#}
+    {#                        <tr>#}
+    {#                            <td>{{ i.id }}</td>#}
+    {#                            <td><b>{{ i.point.ssid }}</b></td>#}
+    {#                            <td>{{ i.c_time }}</td>#}
+    {#                            {% if i.level == 0 %}#}
+    {#                                <td><span class="label label-success">Info</span></td>#}
+    {#                            {% elif i.level == 1 %}#}
+    {#                                <td><span class="label label-warning">Warn</span></td>#}
+    {#                            {% else %}#}
+    {#                                <td><span class="label label-danger">Danger</span></td>#}
+    {#                            {% endif %}#}
+    {#                            <td>{{ i.msg }}</td>#}
+    {#                        </tr>#}
+    {#                    {% endfor %}#}
+    {#                </table>#}
+    {#            </div>#}
+    {#            <!-- /.box-body -->#}
+    {#        </div>#}
+    {#        <!-- /.box -->#}
+    {#    </div>#}
+
+
+    <section class="content-header">
+        <h1>
+            警报记录
+            <small>Timeline</small>
+        </h1>
+    </section>
+    <!-- Main content -->
+    <section class="content">
+        <ul class="timeline">
+            {% for i in logs %}
+                <!-- timeline time label -->
+                <li class="time-label">
+                    {% if i.level == 0 %}
+                        <span class="bg-green">
+                        {{ i.c_time|date:'F j，Y' }}
+                      </span>
+                    {% elif i.level == 1 %}
+                        <span class="bg-yellow">
+                        {{ i.c_time|date:'F j，Y' }}
+                      </span>
+                    {% else %}
+                        <span class="bg-red">
+                        {{ i.c_time|date:'F j，Y' }}
+                      </span>
+                    {% endif %}
+                </li>
+                <!-- /.timeline-label -->
+                <!-- timeline item -->
+                <li>
+                    <i class="fa fa-comments bg-blue"></i>
+                    <div class="timeline-item">
+                        <span class="time"><i class="fa fa-clock-o"></i> {{ i.c_time|date:'H:i' }}</span>
+
+                        <h3 class="timeline-header"><a href="/">{{ i.point.ssid }}: </a></h3>
+
+                        <div class="timeline-body">
+                            Detail: {{ i.msg }}
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+            <!-- END timeline item -->
+            <li>
+                <i class="fa fa-clock-o bg-gray"></i>
+            </li>
+        </ul>
+    </section>
+{% endblock %}

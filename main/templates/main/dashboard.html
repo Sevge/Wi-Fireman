@@ -1,0 +1,422 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="col-md-8">
+        <!-- interactive chart -->
+        <div class="box">
+            <div class="box-header with-border">
+                <i class="fa fa-bar-chart-o"></i>
+                <h3 class="box-title">{{ my_point.ssid }}: 信号质量</h3>
+            </div>
+            <div class="box-body">
+                <div id="quality" style="height: 100px;"></div>
+            </div>
+            <!-- /.box-body-->
+        </div>
+        <!-- /.box -->
+
+        <!-- interactive chart -->
+        <div class="box">
+            <div class="box-header with-border">
+                <i class="fa fa-bar-chart-o"></i>
+
+                <h3 class="box-title">{{ my_point.ssid }}: Beacon帧数值</h3>
+            </div>
+            <div class="box-body">
+                <div id="beacon" style="height: 100px;"></div>
+            </div>
+            <!-- /.box-body-->
+        </div>
+        <!-- /.box -->
+
+        <!-- interactive chart -->
+        <div class="box">
+            <div class="box-header with-border">
+                <i class="fa fa-bar-chart-o"></i>
+
+                <h3 class="box-title">{{ my_point.ssid }}: Deauth帧数值</h3>
+            </div>
+            <div class="box-body">
+                <div id="deauth" style="height: 100px;"></div>
+            </div>
+            <!-- /.box-body-->
+        </div>
+        <!-- /.box -->
+    </div>
+
+    <div class="col-xs-4">
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">周围环境的热点</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+                <table class="table table-striped">
+                    <tr>
+                        <th style="width: 10px">#</th>
+                        <th>Ssid</th>
+                        <th style="width: 40px">Quality</th>
+                    </tr>
+                    {% for point in points %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ point.ssid }}</td>
+                            {% if point.quality < 60 %}
+                                <td><span class="badge bg-red">{{ point.quality }}%</span></td>
+                            {% elif point.quality < 80 %}
+                                <td><span class="badge bg-yellow">{{ point.quality }}%</span></td>
+                            {% else %}
+                                <td><span class="badge bg-green">{{ point.quality }}%</span></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+
+        <div class="box">
+            <div class="box-header">
+                <h3 class="box-title">连接到{{ my_point.ssid }}的设备</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+                <table class="table table-striped">
+                    <tr>
+                        <th style="width: 10px">#</th>
+                        <th>Name</th>
+                        <th>Mac</th>
+                    </tr>
+                    {% for device in devices %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ device.name }}</td>
+                            <td>{{ device.mac }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <!-- jQuery 2.2.3 -->
+    <script src="{% static 'plugins/jQuery/jquery-2.2.3.min.js' %}"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- FastClick -->
+    <script src="{% static 'plugins/fastclick/fastclick.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'dist/js/app.min.js' %}"></script>
+    <!-- AdminLTE for demo purposes -->
+    <script src="{% static 'dist/js/demo.js' %}"></script>
+    <!-- FLOT CHARTS -->
+    <script src="{% static 'plugins/flot/jquery.flot.min.js' %}"></script>
+    <!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+    <script src="{% static 'plugins/flot/jquery.flot.resize.min.js' %}"></script>
+    <!-- FLOT PIE PLUGIN - also used to draw donut charts -->
+    <script src="{% static 'plugins/flot/jquery.flot.pie.min.js' %}"></script>
+    <!-- FLOT CATEGORIES PLUGIN - Used to draw bar charts -->
+    <script src="{% static 'plugins/flot/jquery.flot.categories.min.js' %}"></script>
+    <!-- Page script -->
+    <script>
+        $(function () {
+            /*
+             * Flot Interactive Chart
+             * -----------------------
+             */
+            // We use an inline data source in the example, usually data would
+            // be fetched from a server
+            var data = [], totalPoints = 100;
+
+            function getRandomData() {
+
+                if (data.length > 0)
+                    data = data.slice(1);
+
+                // Do a random walk
+                while (data.length < totalPoints) {
+
+                    var prev = data.length > 0 ? data[data.length - 1] : 50,
+                        y = prev + Math.random() * 10 - 5;
+
+                    if (y < 80) {
+                        y = 80;
+                    } else if (y > 100) {
+                        y = 95;
+                    }
+
+                    data.push(y);
+                }
+
+                // Zip the generated y values with the x values
+                var res = [];
+                for (var i = 0; i < data.length; ++i) {
+                    res.push([i, data[i]]);
+                }
+
+                return res;
+            }
+
+            var interactive_plot = $.plot("#quality", [getRandomData()], {
+                grid: {
+                    borderColor: "#f3f3f3",
+                    borderWidth: 1,
+                    tickColor: "#f3f3f3"
+                },
+                series: {
+                    shadowSize: 0, // Drawing is faster without shadows
+                    color: "#3c8dbc"
+                },
+                lines: {
+                    fill: true, //Converts the line chart to area chart
+                    color: "#3c8dbc"
+                },
+                yaxis: {
+                    min: 0,
+                    max: 100,
+                    show: true
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            var updateInterval = 1000; //Fetch data ever x milliseconds
+            var realtime = "on"; //If == to on then fetch data every x seconds. else stop fetching
+            function update() {
+
+                interactive_plot.setData([getRandomData()]);
+
+                // Since the axes don't change, we don't need to call plot.setupGrid()
+                interactive_plot.draw();
+                if (realtime === "on")
+                    setTimeout(update, updateInterval);
+            }
+
+            //INITIALIZE REALTIME DATA FETCHING
+            if (realtime === "on") {
+                update();
+            }
+            //REALTIME TOGGLE
+            $("#realtime .btn").click(function () {
+                if ($(this).data("toggle") === "on") {
+                    realtime = "on";
+                }
+                else {
+                    realtime = "off";
+                }
+                update();
+            });
+            /*
+             * END INTERACTIVE CHART
+             */
+
+        });
+
+        $(function () {
+            /*
+             * Flot Interactive Chart
+             * -----------------------
+             */
+            // We use an inline data source in the example, usually data would
+            // be fetched from a server
+            var data = [], totalPoints = 100;
+
+            function getRandomData() {
+
+                if (data.length > 0)
+                    data = data.slice(1);
+
+                // Do a random walk
+                while (data.length < totalPoints) {
+
+                    var prev = data.length > 0 ? data[data.length - 1] : 100,
+                        y = prev + Math.random() * 100 - 50;
+
+                    if (y < 3000) {
+                        y = 3800;
+                    } else if (y > 5000) {
+                        y = 5000;
+                    }
+
+                    data.push(y);
+                }
+
+                // Zip the generated y values with the x values
+                var res = [];
+                for (var i = 0; i < data.length; ++i) {
+                    res.push([i, data[i]]);
+                }
+
+                return res;
+            }
+
+            var interactive_plot = $.plot("#beacon", [getRandomData()], {
+                grid: {
+                    borderColor: "#f3f3f3",
+                    borderWidth: 1,
+                    tickColor: "#f3f3f3"
+                },
+                series: {
+                    shadowSize: 0, // Drawing is faster without shadows
+                    color: "#3c8dbc"
+                },
+                lines: {
+                    fill: true, //Converts the line chart to area chart
+                    color: "#3c8dbc"
+                },
+                yaxis: {
+                    min: 2000,
+                    max: 5000,
+                    show: true
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            var updateInterval = 1000; //Fetch data ever x milliseconds
+            var realtime = "on"; //If == to on then fetch data every x seconds. else stop fetching
+            function update() {
+
+                interactive_plot.setData([getRandomData()]);
+
+                // Since the axes don't change, we don't need to call plot.setupGrid()
+                interactive_plot.draw();
+                if (realtime === "on")
+                    setTimeout(update, updateInterval);
+            }
+
+            //INITIALIZE REALTIME DATA FETCHING
+            if (realtime === "on") {
+                update();
+            }
+            //REALTIME TOGGLE
+            $("#realtime .btn").click(function () {
+                if ($(this).data("toggle") === "on") {
+                    realtime = "on";
+                }
+                else {
+                    realtime = "off";
+                }
+                update();
+            });
+            /*
+             * END INTERACTIVE CHART
+             */
+
+        });
+
+        $(function () {
+            /*
+             * Flot Interactive Chart
+             * -----------------------
+             */
+            // We use an inline data source in the example, usually data would
+            // be fetched from a server
+            var data = [], totalPoints = 100;
+
+            function getRandomData() {
+
+                if (data.length > 0)
+                    data = data.slice(1);
+
+                // Do a random walk
+                while (data.length < totalPoints) {
+
+                    var prev = data.length > 0 ? data[data.length - 1] : 50,
+                        y = Math.random() * 10;
+
+                    if (y < 0) {
+                        y = 0;
+                    } else if (y > 1) {
+                        y = 0;
+                    }
+                    else if (y == 0) {
+                        y = 1;
+                    }
+
+                    data.push(y);
+                }
+
+                // Zip the generated y values with the x values
+                var res = [];
+                for (var i = 0; i < data.length; ++i) {
+                    res.push([i, data[i]]);
+                }
+
+                return res;
+            }
+
+            var interactive_plot = $.plot("#deauth", [getRandomData()], {
+                grid: {
+                    borderColor: "#f3f3f3",
+                    borderWidth: 1,
+                    tickColor: "#f3f3f3"
+                },
+                series: {
+                    shadowSize: 0, // Drawing is faster without shadows
+                    color: "#3c8dbc"
+                },
+                lines: {
+                    fill: true, //Converts the line chart to area chart
+                    color: "#3c8dbc"
+                },
+                yaxis: {
+                    min: 0,
+                    max: 10,
+                    show: true
+                },
+                xaxis: {
+                    show: false
+                }
+            });
+
+            var updateInterval = 1000; //Fetch data ever x milliseconds
+            var realtime = "on"; //If == to on then fetch data every x seconds. else stop fetching
+            function update() {
+
+                interactive_plot.setData([getRandomData()]);
+
+                // Since the axes don't change, we don't need to call plot.setupGrid()
+                interactive_plot.draw();
+                if (realtime === "on")
+                    setTimeout(update, updateInterval);
+            }
+
+            //INITIALIZE REALTIME DATA FETCHING
+            if (realtime === "on") {
+                update();
+            }
+            //REALTIME TOGGLE
+            $("#realtime .btn").click(function () {
+                if ($(this).data("toggle") === "on") {
+                    realtime = "on";
+                }
+                else {
+                    realtime = "off";
+                }
+                update();
+            });
+            /*
+             * END INTERACTIVE CHART
+             */
+
+        });
+
+        /*
+         * Custom Label formatter
+         * ----------------------
+         */
+        function labelFormatter(label, series) {
+            return '<div style="font-size:13px; text-align:center; padding:2px; color: #fff; font-weight: 600;">'
+                + label
+                + "<br>"
+                + Math.round(series.percent) + "%</div>";
+        }
+    </script>
+{% endblock %}
