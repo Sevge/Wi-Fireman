@@ -8,7 +8,7 @@ idna==2.8
 pycparser==2.19
 PyMySQL==0.9.3
 pytz==2018.5
-pywin32==221
+pywin32==301
 requests==2.21.0
 urllib3==1.24.2
 WMI==1.4.9
